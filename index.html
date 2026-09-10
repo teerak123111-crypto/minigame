@@ -171,6 +171,24 @@ button{font-family:inherit; cursor:pointer; border:none;}
 .tab-panel{display:none;}
 .tab-panel.show{display:block;}
 .prep-underline{border-bottom:3px solid #6A3FD1; color:#6A3FD1; font-weight:700; padding:0 2px;}
+
+.group-note{background:#FFF3E6; color:#B85C00; font-weight:700; border-radius:12px; padding:10px 14px; margin-top:10px; font-size:.92rem;}
+.rules-toggle-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
+.print-btn{display:inline-block; background:#fff; border-radius:14px; padding:9px 16px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,.08); color:var(--dark);}
+#print-area{display:none;}
+@media print{ .noprint{display:none !important;} }
+.print-title{font-size:1.3rem; font-weight:700; margin-bottom:2px;}
+.print-sub{color:#666; font-size:.85rem; margin-bottom:14px;}
+.print-fields{display:flex; gap:26px; margin-bottom:14px; font-size:.98rem;}
+.print-fields span{border-bottom:1px solid #333; min-width:150px; display:inline-block;}
+.print-table{width:100%; border-collapse:collapse; margin-top:8px;}
+.print-table th, .print-table td{border:1px solid #999; padding:7px 9px; text-align:left; font-size:.9rem;}
+.print-score-box{margin-top:16px; font-size:1rem; font-weight:700;}
+.print-rules ol{padding-left:22px; line-height:1.9;}
+.reveal-row{background:#F7F7FB; border-radius:12px; padding:10px 14px; margin:8px 0; font-size:.98rem;}
+.reveal-why{color:#777; font-size:.88rem; margin-top:4px;}
+.reveal-modal-box{max-width:640px; width:90vw; max-height:80vh; overflow-y:auto;}
+
 </style>
 </head>
 <body>
@@ -236,8 +254,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('naam')">ดูกติกา</button>
-    <div class="rules-box" id="rules-naam"><ol><li>แบ่งกลุ่ม กดเริ่มจับเวลา 60 วินาที</li><li>แต่ละกลุ่มเขียนคำนามที่เห็นในห้องลงกระดาษให้ได้มากที่สุด (ใช้กระดาษ+ปากกา)</li><li>หมดเวลาแล้วช่วยกันบอกว่าแต่ละคำเป็นคำนามชนิดไหน</li><li>พิมพ์จำนวนคำที่แต่ละกลุ่มหาเจอลงในเว็บเพื่อตัดสินผู้ชนะ</li></ol><div class="note-line">อุปกรณ์เสริม: กระดาษและปากกาให้แต่ละกลุ่มจดคำที่หาเจอ</div></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('naam')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('naam')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-naam"><ol><li>แจกใบงาน “ล่าคำนามในห้อง” ให้นักเรียนคนละ 1 แผ่น เขียนชื่อและเลขที่ให้เรียบร้อย</li><li>ครูจับเวลา 60 วินาที นักเรียนแต่ละคนเขียนคำนามที่มองเห็นในห้องเรียนลงในใบงานของตนเองให้ได้มากที่สุด</li><li>หมดเวลาแล้วให้ระบุต่อว่าคำนามแต่ละคำเป็นชนิดย่อยใด (สามานยนาม วิสามานยนาม ลักษณนาม สมุหนาม หรืออาการนาม)</li><li>ครูกดเฉลยบนจอ นักเรียนตรวจใบงานของตนเอง เขียนคำนามถูกได้คำละ 1 คะแนน ระบุชนิดย่อยถูกได้เพิ่มอีกคำละ 1 คะแนน (เต็ม 10 คะแนน)</li><li>รวมคะแนนของสมาชิกในกลุ่มเพื่อหากลุ่มชนะ แล้วส่งใบงานให้ครูเก็บเป็นคะแนนรายบุคคล</li></ol><div class="note-line">อุปกรณ์: ใบงาน “ล่าคำนามในห้อง” คนละ 1 แผ่น (กดปุ่ม “พิมพ์ใบงาน” ด้านล่างเพื่อพิมพ์ก่อนเริ่มกิจกรรม) — คะแนนนี้นับเป็นคะแนนรายบุคคล (E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn " id="modebtn-naam-team" onclick="setMode('naam','team')">ทีม</button>
@@ -261,6 +279,10 @@ button{font-family:inherit; cursor:pointer; border:none;}
   </div>
 </div>
 <div class="card" id="naam-award"></div>
+<div class="card center noprint">
+  <button class="btn btn-outline" onclick="printWorksheet('naam')">พิมพ์ใบงาน</button>
+  <button class="btn btn-outline" onclick="revealAll('naam')">ดูตารางอ้างอิงชนิดคำนาม</button>
+</div>
 </div>
 <div class="screen" id="screen-sapphanam">
     <div class="game-topbar" style="background:#FFC947">
@@ -271,8 +293,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('sapphanam')">ดูกติกา</button>
-    <div class="rules-box" id="rules-sapphanam"><ol><li>เว็บจะสุ่มประโยคเว้นช่องว่างขึ้นมาทีละข้อ</li><li>เลือกกลุ่มที่จะตอบ ให้ตัวแทนพูดคำตอบออกมาดัง ๆ</li><li>ครูกดตัวเลือกที่กลุ่มตอบ เว็บจะเฉลยถูก/ผิดทันที</li><li>ตอบถูกได้ 1 คะแนน ทำครบทุกข้อแล้วดูผู้ชนะ</li></ol></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('sapphanam')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('sapphanam')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-sapphanam"><ol><li>แบ่งนักเรียนออกเป็นทีม ทีมละเท่า ๆ กัน ตั้งชื่อทีมในระบบ</li><li>ระบบแสดงประโยคที่มีคำนามซ้ำกันทีละข้อบนจอ</li><li>ตัวแทนทีมผลัดกันเลือกคำสรรพนามที่ใช้แทนคำนามนั้นได้ถูกต้องภายในเวลาที่กำหนด</li><li>ตอบถูกได้คะแนนสะสมเข้าทีม ตอบผิดหรือหมดเวลา เปิดโอกาสให้ทีมถัดไปตอบแทน</li><li>ทีมที่มีคะแนนสะสมมากที่สุดเป็นผู้ชนะ (คะแนนนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดคะแนนรายบุคคล)</li></ol><div class="group-note">หมายเหตุ: คะแนนของเกมนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดเป็นคะแนนรายบุคคล (ไม่นับรวมในค่า E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn sel" id="modebtn-sapphanam-team" onclick="setMode('sapphanam','team')">ทีม</button>
@@ -298,8 +320,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('kriya')">ดูกติกา</button>
-    <div class="rules-box" id="rules-kriya"><ol><li>ครูกดสุ่มคำ (ดูคำในหน้าจอของครูเท่านั้น อย่าเพิ่งฉายจอนี้ให้เห็น)</li><li>สลับไปโหมดจับเวลาก่อนฉายให้ทั้งห้องเห็น ตัวแทนกลุ่มออกมาใบ้ท่าทาง ห้ามพูด</li><li>เพื่อนในห้องช่วยกันทาย ทายถูกก่อนหมดเวลาได้คะแนน</li><li>กดเฉลยคำ พร้อมบอกว่าเป็นกริยาชนิดไหน แล้วให้คะแนนกลุ่มที่ทายถูก</li></ol><div class="note-line">อุปกรณ์เสริม: ควรมีจอ/หน้าจอของครูแยกจากจอโปรเจกเตอร์ เพื่อดูคำศัพท์คนเดียวก่อนใบ้ (หรือปริ้นคำศัพท์ใส่ซองจับสลากแทนก็ได้)</div></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('kriya')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('kriya')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-kriya"><ol><li>แบ่งนักเรียนออกเป็นทีม แต่ละทีมส่งตัวแทนออกมาใบ้ท่าทีละคน หมุนเวียนให้ครบทุกคน</li><li>ระบบสุ่มคำกริยาขึ้นบนจอให้เฉพาะผู้ใบ้เห็น</li><li>ผู้ใบ้แสดงท่าทางเท่านั้น ห้ามพูด ห้ามเขียน และห้ามทำปากขยับเป็นคำ</li><li>เพื่อนในทีมช่วยกันทายภายใน 30 วินาที ทายถูกได้ 1 คะแนน</li><li>เมื่อครบทุกคนแล้ว ทีมที่มีคะแนนมากที่สุดเป็นผู้ชนะ (คะแนนนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดคะแนนรายบุคคล)</li></ol><div class="group-note">หมายเหตุ: คะแนนของเกมนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดเป็นคะแนนรายบุคคล (ไม่นับรวมในค่า E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn sel" id="modebtn-kriya-team" onclick="setMode('kriya','team')">ทีม</button>
@@ -338,8 +360,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('wiset')">ดูกติกา</button>
-    <div class="rules-box" id="rules-wiset"><ol><li>เว็บจะสุ่มประโยคเปล่า ๆ ขึ้นมา</li><li>แต่ละกลุ่มช่วยกันคิดคำวิเศษณ์มาเติม พูดออกมาดัง ๆ</li><li>ครูพิมพ์คำตอบของแต่ละกลุ่มลงในช่อง แล้วให้ทั้งห้องโหวตประโยคที่ชอบที่สุด</li><li>กลุ่มที่ได้โหวตมากที่สุดในรอบนั้นได้คะแนน</li></ol></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('wiset')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('wiset')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-wiset"><ol><li>แจกใบงาน “เติมสีให้ประโยค” ให้นักเรียนคนละ 1 แผ่น จำนวน 10 ข้อ เขียนชื่อและเลขที่ให้เรียบร้อย</li><li>ระบบฉายประโยคที่เว้นช่องว่างไว้ทีละข้อบนจอ พร้อมตัวเลือกคำวิเศษณ์</li><li>นักเรียนแต่ละคนเขียนคำวิเศษณ์ที่เหมาะสมลงในใบงานของตนเอง ห้ามปรึกษากันระหว่างทำ</li><li>ทำครบทุกข้อแล้วครูกดเฉลยในเกม นักเรียนตรวจใบงานของตนเอง เติมคำถูกได้ข้อละ 1 คะแนน (เต็ม 10 คะแนน)</li><li>ส่งใบงานให้ครูเก็บเป็นคะแนนรายบุคคล แล้วนับคะแนนรวมของกลุ่มเพื่อหากลุ่มชนะ</li></ol><div class="note-line">อุปกรณ์: ใบงาน “เติมสีให้ประโยค” คนละ 1 แผ่น (กดปุ่ม “พิมพ์ใบงาน” ด้านล่างเพื่อพิมพ์ก่อนเริ่มกิจกรรม) — คะแนนนี้นับเป็นคะแนนรายบุคคล (E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn sel" id="modebtn-wiset-team" onclick="setMode('wiset','team')">ทีม</button>
@@ -348,12 +370,15 @@ button{font-family:inherit; cursor:pointer; border:none;}
     <div class="scoreboard" id="scoreboard-wiset"></div>
     
 <div class="card center">
-  <div class="note-line">ประโยคเปล่า ๆ (ยังไม่มีคำวิเศษณ์)</div>
-  <div class="big-text" id="wiset-sentence">กดปุ่ม "สุ่มประโยค" เพื่อเริ่ม</div>
-  <button class="btn" style="background:#4D96FF" onclick="wisetNext()">สุ่มประโยค</button>
-  <button class="btn btn-outline" onclick="wisetAddEntry()">เพิ่มคำตอบอีกหนึ่ง</button>
+  <div class="big-text" id="wiset-sentence">กดปุ่ม "โจทย์ถัดไป" เพื่อเริ่ม</div>
+  <div class="choice-row" id="wiset-choices"></div>
+  <div class="explain-box" id="wiset-explain"></div>
+  <div class="note-line">เลือกคนหรือทีมที่กำลังตอบ ก่อนกดตัวเลือกเพื่อเฉลย</div>
+  <div class="team-row" id="wiset-team-row"></div>
+  <button class="btn" style="background:#4D96FF" onclick="wisetNext()">โจทย์ถัดไป</button>
+  <button class="btn btn-outline noprint" onclick="printWorksheet('wiset')">พิมพ์ใบงาน</button>
+  <button class="btn btn-outline noprint" onclick="revealAll('wiset')">เฉลยทั้งหมด</button>
 </div>
-<div class="card" id="wiset-entries"></div>
 </div>
 <div class="screen" id="screen-buppot">
     <div class="game-topbar" style="background:#9B6DFF">
@@ -364,8 +389,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('buppot')">ดูกติกา</button>
-    <div class="rules-box" id="rules-buppot"><ol><li>เว็บจะสุ่มคำสั่งที่มีคำบุพบทขึ้นมา</li><li>นักเรียนทุกคนทำตามคำสั่งจริงกับของบนโต๊ะตัวเอง (ดินสอ ยางลบ สมุด ฯลฯ)</li><li>ครูเดินตรวจหรือให้ตัวแทนกลุ่มยกของที่วางถูกต้องขึ้นมาโชว์</li><li>กดถูก/ผิดให้แต่ละกลุ่มเพื่อบันทึกคะแนน</li></ol><div class="note-line">อุปกรณ์เสริม: ของใช้บนโต๊ะนักเรียน เช่น ดินสอ ยางลบ สมุด ไม้บรรทัด</div></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('buppot')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('buppot')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-buppot"><ol><li>แจกใบงาน “วางของให้ถูกที่” ให้นักเรียนคนละ 1 แผ่น ในใบงานมีภาพห้องและสิ่งของ 10 สถานการณ์</li><li>ระบบฉายภาพสถานการณ์เดียวกันทีละข้อบนจอ</li><li>นักเรียนแต่ละคนเขียนคำบุพบทที่บอกตำแหน่งได้ถูกต้องลงในใบงานของตนเอง เช่น บน ใต้ ข้าง ระหว่าง</li><li>ครูกดเฉลยบนจอโดยลากวัตถุให้ดูตามคำบุพบทที่ถูกต้อง นักเรียนตรวจใบงานของตนเอง ตอบถูกได้ข้อละ 1 คะแนน (เต็ม 10 คะแนน)</li><li>ส่งใบงานให้ครูเก็บเป็นคะแนนรายบุคคล</li></ol><div class="note-line">อุปกรณ์: ใบงาน “วางของให้ถูกที่” คนละ 1 แผ่น (กดปุ่ม “พิมพ์ใบงาน” ด้านล่างเพื่อพิมพ์ก่อนเริ่มกิจกรรม) — คะแนนนี้นับเป็นคะแนนรายบุคคล (E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn " id="modebtn-buppot-team" onclick="setMode('buppot','team')">ทีม</button>
@@ -384,6 +409,10 @@ button{font-family:inherit; cursor:pointer; border:none;}
   <div class="explain-box ok" id="buppot-answer"></div>
 </div>
 <div class="card" id="buppot-team-row"></div>
+<div class="card center noprint">
+  <button class="btn btn-outline" onclick="printWorksheet('buppot')">พิมพ์ใบงาน</button>
+  <button class="btn btn-outline" onclick="revealAll('buppot')">เฉลยทั้งหมด</button>
+</div>
 </div>
 <div class="screen" id="screen-santan">
     <div class="game-topbar" style="background:#FF9F43">
@@ -394,8 +423,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('santan')">ดูกติกา</button>
-    <div class="rules-box" id="rules-santan"><ol><li>เว็บจะสุ่มประโยค 2 ประโยคที่ยังไม่ได้เชื่อมกัน</li><li>แต่ละกลุ่มเลือกคำสันธานที่คิดว่าเหมาะสมที่สุด พูดออกมา</li><li>ครูกดตัวเลือกที่กลุ่มเลือก เว็บจะเฉลยและอ่านประโยคที่เชื่อมสมบูรณ์ให้ฟัง</li><li>ตอบถูกได้คะแนน ทำครบทุกข้อแล้วดูผู้ชนะ</li></ol></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('santan')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('santan')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-santan"><ol><li>แจกใบงาน “ต่อประโยคปริศนา” ให้นักเรียนคนละ 1 แผ่น จำนวน 10 ข้อ</li><li>ระบบแสดงประโยค 2 ประโยคที่ยังไม่เชื่อมกันทีละข้อบนจอ</li><li>นักเรียนแต่ละคนเขียนคำสันธานที่เชื่อมประโยคทั้งสองให้ได้ใจความถูกต้องลงในใบงานของตนเอง พร้อมระบุว่าเป็นการเชื่อมความแบบใด (คล้อยตาม ขัดแย้ง ให้เลือก หรือเป็นเหตุเป็นผล)</li><li>ครูกดเฉลยบนจอ เขียนคำสันธานถูกได้ข้อละ 1 คะแนน (เต็ม 10 คะแนน)</li><li>ส่งใบงานให้ครูเก็บเป็นคะแนนรายบุคคล</li></ol><div class="note-line">อุปกรณ์: ใบงาน “ต่อประโยคปริศนา” คนละ 1 แผ่น (กดปุ่ม “พิมพ์ใบงาน” ด้านล่างเพื่อพิมพ์ก่อนเริ่มกิจกรรม) — คะแนนนี้นับเป็นคะแนนรายบุคคล (E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn sel" id="modebtn-santan-team" onclick="setMode('santan','team')">ทีม</button>
@@ -413,6 +442,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
   <div class="note-line">เลือกคนหรือทีมที่กำลังตอบ ก่อนกดตัวเลือกเพื่อเฉลย</div>
   <div class="team-row" id="santan-team-row"></div>
   <button class="btn" style="background:#FF9F43" onclick="santanNext()">โจทย์ถัดไป</button>
+  <button class="btn btn-outline noprint" onclick="printWorksheet('santan')">พิมพ์ใบงาน</button>
+  <button class="btn btn-outline noprint" onclick="revealAll('santan')">เฉลยทั้งหมด</button>
 </div>
 </div>
 <div class="screen" id="screen-utan">
@@ -424,8 +455,8 @@ button{font-family:inherit; cursor:pointer; border:none;}
       </div>
       <button class="back-btn" onclick="showScreen('screen-menu')">กลับเมนูหลัก</button>
     </div>
-    <button class="rules-toggle" onclick="toggleRules('utan')">ดูกติกา</button>
-    <div class="rules-box" id="rules-utan"><ol><li>เว็บจะสุ่มสถานการณ์ขึ้นมาหนึ่งเรื่อง</li><li>ตัวแทนกลุ่มออกมาแสดงเสียงอุทาน+ท่าทางให้เข้ากับสถานการณ์</li><li>เพื่อน ๆ ช่วยกันบอกว่าใช้คำอุทานอะไร แล้วกดดูตัวอย่างคำเฉลย</li><li>ครูให้ดาว 1-3 ดวงตามความสมจริง/ความกล้าแสดงออก แล้วบวกคะแนนให้กลุ่ม</li></ol></div>
+    <div class="rules-toggle-row"><button class="rules-toggle" onclick="toggleRules('utan')">ดูกติกา</button><button class="print-btn noprint" onclick="printRules('utan')">พิมพ์กติกา / บันทึก PDF</button></div>
+    <div class="rules-box" id="rules-utan"><ol><li>แบ่งนักเรียนออกเป็นทีมเช่นเดิม</li><li>ระบบแสดงสถานการณ์หรืออารมณ์บนจอ เช่น ตกใจ ดีใจ เจ็บ</li><li>ตัวแทนทีมเลือกคำอุทานที่สอดคล้องกับสถานการณ์ แล้วเปล่งเสียงออกมาให้เหมาะสมกับอารมณ์นั้น</li><li>เลือกคำถูกได้ 1 คะแนน และเปล่งเสียงได้สมจริงตามมติของเพื่อนทั้งห้องได้เพิ่มอีก 1 คะแนน</li><li>ทีมที่มีคะแนนมากที่สุดเป็นผู้ชนะ (คะแนนนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดคะแนนรายบุคคล)</li></ol><div class="group-note">หมายเหตุ: คะแนนของเกมนี้เป็นคะแนนกิจกรรมกลุ่ม ไม่นำไปคิดเป็นคะแนนรายบุคคล (ไม่นับรวมในค่า E1)</div></div>
     <div class="mode-row">
       <span class="note-line" style="margin:0;">โหมดให้คะแนน:</span>
       <button class="mode-btn sel" id="modebtn-utan-team" onclick="setMode('utan','team')">ทีม</button>
@@ -485,16 +516,43 @@ button{font-family:inherit; cursor:pointer; border:none;}
   </div>
 </div>
 
+<div class="modal-bg" id="reveal-modal">
+  <div class="modal-box reveal-modal-box">
+    <div id="reveal-body"></div>
+    <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+      <button class="btn" style="background:#2F3C7E" onclick="closeReveal()">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div id="print-area"></div>
+
 <script>
 
 const PRONOUN_Q = [{"sent": ["", "ชวนเธอไปเที่ยวด้วยกัน"], "ans": "ฉัน", "choices": ["ฉัน", "ใคร", "นี่", "ต่าง"], "why": "เป็นคำแทนตัวผู้พูดเอง (บุรุษสรรพนามที่ 1)"}, {"sent": ["", "คือสมุดของฉัน"], "ans": "นี่", "choices": ["นี่", "เธอ", "ใคร", "ต่าง"], "why": "ใช้ชี้สิ่งของที่อยู่ใกล้ตัวผู้พูด (นิยมสรรพนาม)"}, {"sent": ["", "ก็ทำแบบฝึกหัดนี้ได้"], "ans": "ใคร", "choices": ["ใคร", "นี่", "ฉัน", "เขา"], "why": "ใช้แบบไม่เฉพาะเจาะจงว่าเป็นใคร ไม่ใช่การถาม (อนิยมสรรพนาม)"}, {"sent": ["", "ทำแก้วแตก"], "ans": "ใคร", "choices": ["ใคร", "นี่", "ฉัน", "ต่าง"], "why": "เป็นคำถามว่าเป็นใคร (ปฤจฉาสรรพนาม)"}, {"sent": ["นักเรียน", "ตั้งใจเรียน"], "ans": "ต่าง", "choices": ["ต่าง", "นี่", "ใคร", "เธอ"], "why": "บอกว่าต่างคนต่างทำ ไม่ได้ทำร่วมกัน (วิภาคสรรพนาม)"}, {"sent": ["", "อยากกินไอศกรีม"], "ans": "ฉัน", "choices": ["ฉัน", "นี่", "ต่าง", "ใคร"], "why": "แทนตัวผู้พูดเอง (บุรุษสรรพนามที่ 1)"}, {"sent": ["แม่ให้", "ไปซื้อของ"], "ans": "เธอ", "choices": ["เธอ", "นี่", "ต่าง", "ใคร"], "why": "แทนผู้ฟังที่แม่พูดด้วย (บุรุษสรรพนามที่ 2)"}, {"sent": ["", "เป็นสมุดเล่มใหม่ของน้อง"], "ans": "นั่น", "choices": ["นั่น", "ฉัน", "เธอ", "ต่าง"], "why": "ใช้ชี้สิ่งของที่อยู่ไกลตัวผู้พูดออกไป (นิยมสรรพนาม)"}, {"sent": ["พวกเรา", "ชอบเล่นฟุตบอล"], "ans": "ต่าง", "choices": ["ต่าง", "ใคร", "นี่", "เขา"], "why": "บอกว่าแต่ละคนต่างชอบเหมือนกัน (วิภาคสรรพนาม)"}, {"sent": ["", "อยู่ในห้องคนเดียว"], "ans": "เขา", "choices": ["เขา", "ใคร", "นี่", "ต่าง"], "why": "แทนบุคคลที่สามที่ถูกกล่าวถึง (บุรุษสรรพนามที่ 3)"}];
-const CONJ_Q = [{"a": "ฉันชอบกินผลไม้", "b": "ไม่ชอบกินผัก", "ans": "แต่", "why": "สองประโยคนี้มีใจความขัดแย้งกัน จึงต้องใช้คำเชื่อมที่แสดงความขัดแย้ง"}, {"a": "ฝนตกหนัก", "b": "ฉันมาโรงเรียนสาย", "ans": "เพราะ...จึง", "why": "ประโยคแรกเป็นเหตุ ประโยคหลังเป็นผลที่ตามมา จึงต้องใช้คำเชื่อมแสดงเหตุผล"}, {"a": "จะกินข้าว", "b": "กินก๋วยเตี๋ยวดี", "ans": "หรือ", "why": "เป็นการให้เลือกอย่างใดอย่างหนึ่งระหว่างสองทางเลือก"}, {"a": "ฉันชอบร้องเพลง", "b": "เต้น", "ans": "และ", "why": "สองประโยคนี้ไปด้วยกันได้ ไม่ขัดแย้งกัน จึงใช้คำเชื่อมที่แสดงความคล้อยตาม"}, {"a": "เขาขยันเรียน", "b": "สอบได้คะแนนดี", "ans": "เพราะ...จึง", "why": "ความขยันเป็นเหตุ การสอบได้คะแนนดีเป็นผลที่ตามมา"}, {"a": "น้องอยากไปเที่ยวทะเล", "b": "อยากไปเที่ยวภูเขา", "ans": "หรือ", "why": "เป็นการเสนอทางเลือกสองทางให้เลือกอย่างใดอย่างหนึ่ง"}, {"a": "ฉันหิวข้าว", "b": "ไม่มีเงินซื้อ", "ans": "แต่", "why": "สองประโยคนี้ขัดแย้งกัน (หิวแต่ไม่มีเงิน)"}, {"a": "เธอชอบวาดรูป", "b": "ชอบร้องเพลงด้วย", "ans": "และ", "why": "สองประโยคนี้เสริมกัน ไปด้วยกันได้ ไม่ขัดแย้งกัน"}];
+const CONJ_Q = [{"a": "ฉันชอบกินผลไม้", "b": "ไม่ชอบกินผัก", "ans": "แต่", "why": "สองประโยคนี้มีใจความขัดแย้งกัน จึงต้องใช้คำเชื่อมที่แสดงความขัดแย้ง", "type": "ขัดแย้ง"}, {"a": "ฝนตกหนัก", "b": "ฉันมาโรงเรียนสาย", "ans": "เพราะ...จึง", "why": "ประโยคแรกเป็นเหตุ ประโยคหลังเป็นผลที่ตามมา จึงต้องใช้คำเชื่อมแสดงเหตุผล", "type": "เหตุเป็นผล"}, {"a": "จะกินข้าว", "b": "กินก๋วยเตี๋ยวดี", "ans": "หรือ", "why": "เป็นการให้เลือกอย่างใดอย่างหนึ่งระหว่างสองทางเลือก", "type": "ให้เลือก"}, {"a": "ฉันชอบร้องเพลง", "b": "เต้น", "ans": "และ", "why": "สองประโยคนี้ไปด้วยกันได้ ไม่ขัดแย้งกัน จึงใช้คำเชื่อมที่แสดงความคล้อยตาม", "type": "คล้อยตาม"}, {"a": "เขาขยันเรียน", "b": "สอบได้คะแนนดี", "ans": "เพราะ...จึง", "why": "ความขยันเป็นเหตุ การสอบได้คะแนนดีเป็นผลที่ตามมา", "type": "เหตุเป็นผล"}, {"a": "น้องอยากไปเที่ยวทะเล", "b": "อยากไปเที่ยวภูเขา", "ans": "หรือ", "why": "เป็นการเสนอทางเลือกสองทางให้เลือกอย่างใดอย่างหนึ่ง", "type": "ให้เลือก"}, {"a": "ฉันหิวข้าว", "b": "ไม่มีเงินซื้อ", "ans": "แต่", "why": "สองประโยคนี้ขัดแย้งกัน (หิวแต่ไม่มีเงิน)", "type": "ขัดแย้ง"}, {"a": "เธอชอบวาดรูป", "b": "ชอบร้องเพลงด้วย", "ans": "และ", "why": "สองประโยคนี้เสริมกัน ไปด้วยกันได้ ไม่ขัดแย้งกัน", "type": "คล้อยตาม"}, {"a": "ฉันอยากได้ทั้งดินสอ", "b": "อยากได้ยางลบ", "ans": "และ", "why": "สองประโยคนี้เสริมกัน ไม่ขัดแย้งกัน จึงใช้คำเชื่อมที่แสดงความคล้อยตาม", "type": "คล้อยตาม"}, {"a": "เขาซ้อมกีฬาอย่างหนัก", "b": "ได้เป็นตัวแทนโรงเรียน", "ans": "เพราะ...จึง", "why": "การซ้อมหนักเป็นเหตุ การได้เป็นตัวแทนโรงเรียนเป็นผลที่ตามมา", "type": "เหตุเป็นผล"}];
 const CONJ_CHOICES = ["และ", "แต่", "หรือ", "เพราะ...จึง"];
-const ADV_SENT = ["น้องวิ่ง", "แมวนอน", "ครูสอน", "ฝนตก", "เด็กร้องไห้", "นกบิน", "พ่อทำงาน", "ปลาว่ายน้ำ"];
-const PREP_CMD = [{"sentence": "วางดินสอไว้ใต้หนังสือ", "prep": "ใต้", "why": "“ใต้” บอกตำแหน่งของดินสอว่าอยู่ต่ำกว่าหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางยางลบไว้บนโต๊ะ", "prep": "บน", "why": "“บน” บอกตำแหน่งของยางลบว่าอยู่เหนือผิวโต๊ะ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางสมุดไว้ในกระเป๋า", "prep": "ใน", "why": "“ใน” บอกตำแหน่งของสมุดว่าอยู่ภายในกระเป๋า จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางไม้บรรทัดไว้ข้างหนังสือ", "prep": "ข้าง", "why": "“ข้าง” บอกตำแหน่งของไม้บรรทัดว่าอยู่ติดกับหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางกบเหลาดินสอไว้บนสมุด", "prep": "บน", "why": "“บน” บอกตำแหน่งของกบเหลาดินสอว่าอยู่เหนือสมุด จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางแก้วน้ำไว้ใกล้หนังสือ", "prep": "ใกล้", "why": "“ใกล้” บอกตำแหน่งของแก้วน้ำว่าอยู่ไม่ไกลจากหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางปากกาไว้ใต้สมุด", "prep": "ใต้", "why": "“ใต้” บอกตำแหน่งของปากกาว่าอยู่ต่ำกว่าสมุด จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางกระเป๋าไว้ข้างเก้าอี้", "prep": "ข้าง", "why": "“ข้าง” บอกตำแหน่งของกระเป๋าว่าอยู่ติดกับเก้าอี้ จึงเป็นคำบุพบทบอกสถานที่"}];
+const WISET_Q = [{"sent": ["น้องวิ่ง", "จนหกล้ม"], "ans": "เร็ว", "choices": ["เร็ว", "ช้า", "ดัง", "สวย"], "why": "“เร็ว” ขยายกริยา “วิ่ง” บอกลักษณะอาการของการวิ่ง จึงเป็นคำวิเศษณ์บอกลักษณะ"}, {"sent": ["ครูพูดเสียง", "จนได้ยินทั่วห้อง"], "ans": "ดัง", "choices": ["ดัง", "เบา", "ช้า", "สวย"], "why": "“ดัง” ขยายคำว่า “เสียง” บอกลักษณะของเสียงพูด จึงเป็นคำวิเศษณ์บอกลักษณะ"}, {"sent": ["น้องเดิน", "เพราะขาเจ็บ"], "ans": "ช้า", "choices": ["ช้า", "เร็ว", "ดัง", "ไกล"], "why": "“ช้า” ขยายกริยา “เดิน” บอกลักษณะอาการของการเดิน จึงเป็นคำวิเศษณ์บอกลักษณะ"}, {"sent": ["ฉันตื่นนอนแต่", "ทุกวัน"], "ans": "เช้า", "choices": ["เช้า", "สาย", "ดึก", "บ่อย"], "why": "“เช้า” ขยายกริยา “ตื่นนอน” บอกเวลา จึงเป็นคำวิเศษณ์บอกเวลา"}, {"sent": ["พี่เข้านอน", "เพราะอ่านหนังสือสอบ"], "ans": "ดึก", "choices": ["ดึก", "เช้า", "บ่อย", "ไกล"], "why": "“ดึก” ขยายกริยา “เข้านอน” บอกเวลา จึงเป็นคำวิเศษณ์บอกเวลา"}, {"sent": ["น้องกินขนม", "จนอ้วน"], "ans": "มาก", "choices": ["มาก", "น้อย", "ไกล", "สาย"], "why": "“มาก” ขยายกริยา “กิน” บอกปริมาณ จึงเป็นคำวิเศษณ์บอกปริมาณ"}, {"sent": ["วันนี้ฝนตก", "กว่าเมื่อวาน"], "ans": "น้อย", "choices": ["น้อย", "มาก", "ไกล", "ดัง"], "why": "“น้อย” ขยายกริยา “ตก” บอกปริมาณ จึงเป็นคำวิเศษณ์บอกปริมาณ"}, {"sent": ["บ้านของฉันอยู่", "โรงเรียน"], "ans": "ใกล้", "choices": ["ใกล้", "ไกล", "เร็ว", "ช้า"], "why": "“ใกล้” บอกระยะห่างของบ้านกับโรงเรียน จึงเป็นคำวิเศษณ์บอกสถานที่"}, {"sent": ["เขาเดินทางไปทำงานที่", "มาก"], "ans": "ไกล", "choices": ["ไกล", "ใกล้", "ดัง", "เบา"], "why": "“ไกล” บอกระยะทางของการเดินทาง จึงเป็นคำวิเศษณ์บอกสถานที่"}, {"sent": ["หนังสือเล่ม", "เป็นของฉัน"], "ans": "นี้", "choices": ["นี้", "นั้น", "ไหน", "น้อย"], "why": "“นี้” ใช้ชี้เฉพาะหนังสือเล่มที่อยู่ใกล้ผู้พูด จึงเป็นคำวิเศษณ์บอกความชี้เฉพาะ"}];
+const PREP_CMD = [{"sentence": "วางดินสอไว้ใต้หนังสือ", "prep": "ใต้", "why": "“ใต้” บอกตำแหน่งของดินสอว่าอยู่ต่ำกว่าหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางยางลบไว้บนโต๊ะ", "prep": "บน", "why": "“บน” บอกตำแหน่งของยางลบว่าอยู่เหนือผิวโต๊ะ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางสมุดไว้ในกระเป๋า", "prep": "ใน", "why": "“ใน” บอกตำแหน่งของสมุดว่าอยู่ภายในกระเป๋า จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางไม้บรรทัดไว้ข้างหนังสือ", "prep": "ข้าง", "why": "“ข้าง” บอกตำแหน่งของไม้บรรทัดว่าอยู่ติดกับหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางกบเหลาดินสอไว้บนสมุด", "prep": "บน", "why": "“บน” บอกตำแหน่งของกบเหลาดินสอว่าอยู่เหนือสมุด จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางแก้วน้ำไว้ใกล้หนังสือ", "prep": "ใกล้", "why": "“ใกล้” บอกตำแหน่งของแก้วน้ำว่าอยู่ไม่ไกลจากหนังสือ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางปากกาไว้ใต้สมุด", "prep": "ใต้", "why": "“ใต้” บอกตำแหน่งของปากกาว่าอยู่ต่ำกว่าสมุด จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางกระเป๋าไว้ข้างเก้าอี้", "prep": "ข้าง", "why": "“ข้าง” บอกตำแหน่งของกระเป๋าว่าอยู่ติดกับเก้าอี้ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางนาฬิกาไว้หน้าโต๊ะ", "prep": "หน้า", "why": "“หน้า” บอกตำแหน่งของนาฬิกาว่าอยู่ด้านหน้าโต๊ะ จึงเป็นคำบุพบทบอกสถานที่"}, {"sentence": "วางกระถางต้นไม้ไว้ระหว่างประตูกับหน้าต่าง", "prep": "ระหว่าง", "why": "“ระหว่าง” บอกตำแหน่งของกระถางต้นไม้ว่าอยู่ตรงกลางระหว่างประตูกับหน้าต่าง จึงเป็นคำบุพบทบอกสถานที่"}];
 const INTERJ_Q = [{"scene": "เพื่อนทำแก้วน้ำแตก", "hint": "อุ๊ย!"}, {"scene": "ได้ของขวัญที่อยากได้มานาน", "hint": "โอ้โห! / ว้าว!"}, {"scene": "เห็นงูตัวใหญ่ข้างถนน", "hint": "ว้าย!"}, {"scene": "ลืมเอาการบ้านมาโรงเรียน", "hint": "อุ๊ย!"}, {"scene": "เพื่อนเล่นมายากลเก่งมาก", "hint": "โอ้โห!"}, {"scene": "จู่ ๆ ไฟดับทั้งห้อง", "hint": "เอ๊ะ! / ว้าย!"}, {"scene": "เข้าใจโจทย์คณิตศาสตร์ข้อยากได้ในที่สุด", "hint": "อ้อ!"}, {"scene": "เห็นภาพวาดสวยงามของเพื่อน", "hint": "โอ้โห!"}];
 const VERB_Q = [{"w": "วิ่ง", "t": "อกรรมกริยา"}, {"w": "นอน", "t": "อกรรมกริยา"}, {"w": "หัวเราะ", "t": "อกรรมกริยา"}, {"w": "ร้องไห้", "t": "อกรรมกริยา"}, {"w": "กิน", "t": "สกรรมกริยา"}, {"w": "เขียน", "t": "สกรรมกริยา"}, {"w": "อ่าน", "t": "สกรรมกริยา"}, {"w": "ว่ายน้ำ", "t": "อกรรมกริยา"}, {"w": "กระโดด", "t": "อกรรมกริยา"}, {"w": "ล้างจาน", "t": "สกรรมกริยา"}];
-const GAME_MODES_DEFAULT = {"naam": "individual", "sapphanam": "team", "kriya": "team", "wiset": "team", "buppot": "individual", "santan": "team", "utan": "team"};
+const GAME_MODES_DEFAULT = {"naam": "individual", "sapphanam": "team", "kriya": "team", "wiset": "individual", "buppot": "individual", "santan": "individual", "utan": "team"};
+const GAME_META = {
+  naam:{title:"ล่าคำนามในห้อง", sub:"มินิเกม 01 · คำนาม", color:"FF6B6B", worksheet:true},
+  sapphanam:{title:"ชี้ตัวแทน", sub:"มินิเกม 02 · คำสรรพนาม", color:"FFC947", worksheet:false},
+  kriya:{title:"ใบ้ท่ากริยา", sub:"มินิเกม 03 · คำกริยา", color:"3AC7B0", worksheet:false},
+  wiset:{title:"เติมสีให้ประโยค", sub:"มินิเกม 04 · คำวิเศษณ์", color:"4D96FF", worksheet:true},
+  buppot:{title:"วางของให้ถูกที่", sub:"มินิเกม 05 · คำบุพบท", color:"9B6DFF", worksheet:true},
+  santan:{title:"ต่อประโยคปริศนา", sub:"มินิเกม 06 · คำสันธาน", color:"FF9F43", worksheet:true},
+  utan:{title:"ประกวดเสียงอุทาน", sub:"มินิเกม 07 · คำอุทาน", color:"FF6FA8", worksheet:false}
+};
+const NAAM_SUBTYPES = [
+  ["สามานยนาม","ชื่อทั่วไปของคน สัตว์ สิ่งของ","คน, หมา, โต๊ะ"],
+  ["วิสามานยนาม","ชื่อเฉพาะเจาะจง","ครูสมศรี, กรุงเทพฯ"],
+  ["ลักษณนาม","บอกลักษณะหรือหน่วยนับ","ตัว, ใบ, คน"],
+  ["สมุหนาม","เรียกกลุ่ม/หมู่","ฝูง, โขลง, กอง"],
+  ["อาการนาม","บอกอาการ มักมี “การ/ความ” นำหน้า","การวิ่ง, ความสุข"]
+];
 
 
 
@@ -875,46 +933,48 @@ modeRefreshers.kriya = ()=>{
   }
 };
 
-/* ==================== 04 wiset: fill blank + vote ==================== */
-let wisetOrder=[], wisetIdx=-1, wisetEntryCount=0;
+/* ==================== 04 wiset: fixed-order quiz (matches printed worksheet) ==================== */
+let wisetOrder=[], wisetIdx=-1, wisetCur=null;
 function wisetNext(){
   sndPop();
-  if(wisetOrder.length===0) wisetOrder = shuffle([...Array(ADV_SENT.length).keys()]);
+  if(wisetOrder.length===0) wisetOrder = [...Array(WISET_Q.length).keys()];
   wisetIdx = (wisetIdx+1) % wisetOrder.length;
-  document.getElementById('wiset-sentence').textContent = ADV_SENT[wisetOrder[wisetIdx]];
-  wisetEntryCount = 0;
-  document.getElementById('wiset-entries').innerHTML='';
-  wisetAddEntry();
+  wisetCur = WISET_Q[wisetOrder[wisetIdx]];
+  document.getElementById('wiset-sentence').innerHTML =
+    (wisetCur.sent[0]?wisetCur.sent[0]+' ':'') + '<span class="blank">&nbsp;</span>' + (wisetCur.sent[1]?' '+wisetCur.sent[1]:'');
+  const box = document.getElementById('wiset-choices');
+  box.innerHTML='';
+  shuffle(wisetCur.choices).forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice-btn'; b.textContent=c;
+    b.onclick=()=>wisetCheck(c,b);
+    box.appendChild(b);
+  });
+  document.getElementById('wiset-explain').className='explain-box';
+  renderAnswererPicker('wiset','wiset-team-row');
 }
-function wisetAddEntry(){
-  const i = wisetEntryCount++;
-  const el = document.getElementById('wiset-entries');
-  const row = document.createElement('div');
-  row.className='wiset-row';
-  if(gameModes.wiset==='team'){
-    const t = teams[i % teams.length];
-    row.innerHTML = '<span class="wiset-team">'+t.name+'</span>'+
-      '<input type="text" id="wiset-input-'+i+'" placeholder="พิมพ์คำตอบของกลุ่มนี้">'+
-      '<button onclick="wisetVoteTeam('+(i % teams.length)+')">โหวตชนะรอบนี้ +1</button>';
+function wisetCheck(choice,btn){
+  document.querySelectorAll('#wiset-choices .choice-btn').forEach(b=>b.disabled=true);
+  const correct = choice===wisetCur.ans;
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct){
+    sndWrong();
+    [...document.querySelectorAll('#wiset-choices .choice-btn')]
+      .filter(b=>b.textContent===wisetCur.ans).forEach(b=>b.classList.add('correct'));
+    awardAnswerer('wiset', 0);
   } else {
-    row.innerHTML = '<select id="wiset-sel-'+i+'" style="width:150px;">'+studentOptions()+'</select>'+
-      '<input type="text" id="wiset-input-'+i+'" placeholder="พิมพ์คำตอบของนักเรียนคนนี้">'+
-      '<button onclick="wisetVoteIndiv('+i+')">โหวตชนะรอบนี้ +1</button>';
+    sndCorrect();
+    awardAnswerer('wiset', 1);
   }
-  el.appendChild(row);
+  showExplain('wiset-explain', correct, wisetCur.why);
 }
-function wisetVoteTeam(i){ addScore(i,1); }
-function wisetVoteIndiv(i){
-  const sel = document.getElementById('wiset-sel-'+i);
-  if(sel && sel.value) addStudentScore(sel.value,1);
-}
-modeRefreshers.wiset = ()=>{ /* next round will pick up new mode automatically */ };
+modeRefreshers.wiset = ()=>{ if(wisetCur) renderAnswererPicker('wiset','wiset-team-row'); };
 
 /* ==================== 05 buppot: TPR commands ==================== */
 let buppotOrder=[], buppotIdx=-1, buppotCur=null;
 function buppotNext(){
   sndPop();
-  if(buppotOrder.length===0) buppotOrder = shuffle([...Array(PREP_CMD.length).keys()]);
+  if(buppotOrder.length===0) buppotOrder = [...Array(PREP_CMD.length).keys()];
   buppotIdx = (buppotIdx+1) % buppotOrder.length;
   buppotCur = PREP_CMD[buppotOrder[buppotIdx]];
   document.getElementById('buppot-cmd').textContent = buppotCur.sentence;
@@ -942,7 +1002,7 @@ modeRefreshers.buppot = ()=>{ renderAwardArea('buppot','buppot-team-row',[{label
 let santanOrder=[], santanIdx=-1, santanCur=null;
 function santanNext(){
   sndPop();
-  if(santanOrder.length===0) santanOrder = shuffle([...Array(CONJ_Q.length).keys()]);
+  if(santanOrder.length===0) santanOrder = [...Array(CONJ_Q.length).keys()];
   santanIdx = (santanIdx+1) % santanOrder.length;
   santanCur = CONJ_Q[santanOrder[santanIdx]];
   document.getElementById('santan-a').textContent = santanCur.a;
@@ -973,7 +1033,7 @@ function santanCheck(choice,btn){
     awardAnswerer('santan', 1);
   }
   document.getElementById('santan-combined').style.display='block';
-  document.getElementById('santan-combined').textContent = santanCur.a+'  '+santanCur.ans+'  '+santanCur.b;
+  document.getElementById('santan-combined').innerHTML = santanCur.a+'  '+santanCur.ans+'  '+santanCur.b+'<div style="margin-top:6px;font-size:.9rem;color:#B85C00;font-weight:700;">ประเภทการเชื่อมความ: '+santanCur.type+'</div>';
   showExplain('santan-explain', correct, santanCur.why);
 }
 modeRefreshers.santan = ()=>{ if(santanCur) renderAnswererPicker('santan','santan-team-row'); };
@@ -995,6 +1055,156 @@ function utanShowHint(){ document.getElementById('utan-hint').style.display='blo
 modeRefreshers.utan = ()=>{ renderAwardArea('utan','utan-team-row',[{label:'ให้ 1 คะแนน',points:1},{label:'ให้ 2 คะแนน',points:2},{label:'ให้ 3 คะแนน',points:3}]); };
 
 renderAllTopAreas();
+
+/* ==================== print: rules / worksheet / reveal-all (E1 update) ==================== */
+function gameMascotSrc(key){
+  const img = document.querySelector('#screen-'+key+' .game-topbar img');
+  return img ? img.getAttribute('src') : '';
+}
+function printHeader(key, subtitle){
+  const meta = GAME_META[key];
+  const src = gameMascotSrc(key);
+  return '<div class="ws-header" style="background:#'+meta.color+'">'+
+    (src ? '<img class="ws-mascot" width="52" height="52" src="'+src+'">' : '')+
+    '<div class="ws-headtext"><div class="ws-title">'+meta.title+' &nbsp;·&nbsp; '+subtitle+'</div>'+
+    '<div class="ws-sub">'+meta.sub+' · ชนิดของคำในภาษาไทย ชั้นประถมศึกษาปีที่ 6</div></div></div>';
+}
+function printFields(){
+  return '<div class="ws-fields">'+
+    '<div class="ws-field">ชื่อ-นามสกุล <span></span></div>'+
+    '<div class="ws-field">เลขที่ <span class="s"></span></div>'+
+    '<div class="ws-field">ชั้น/ห้อง <span class="s"></span></div>'+
+    '</div>';
+}
+function buildPrintDoc(bodyHtml, title){
+  return '<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>'+title+'</title>'+
+    '<link rel="preconnect" href="https://fonts.googleapis.com">'+
+    '<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">'+
+    '<style>'+
+    '@page{size:A4 portrait; margin:11mm;}'+
+    '*{-webkit-print-color-adjust:exact; print-color-adjust:exact; box-sizing:border-box;}'+
+    'html,body{margin:0; padding:0;}'+
+    'body{font-family:"Kodchasan","Tahoma","Leelawadee UI",sans-serif; color:#3A3A3A; font-size:13px; line-height:1.45;}'+
+    '.ws-header{display:flex; align-items:center; gap:12px; border-radius:18px; padding:10px 16px; color:#fff; margin-bottom:10px;}'+
+    '.ws-mascot{width:52px; height:52px; flex:none;}'+
+    '.ws-title{font-size:18px; font-weight:700;}'+
+    '.ws-sub{font-size:10.5px; opacity:.93;}'+
+    '.ws-fields{display:flex; gap:10px; margin-bottom:9px;}'+
+    '.ws-field{flex:1; border:2px dashed #E3D9CC; border-radius:12px; padding:6px 10px; font-size:12px; color:#7a7a7a;}'+
+    '.ws-field span{display:inline-block; border-bottom:1px dotted #B9B9C4; min-width:120px;}'+
+    '.ws-field span.s{min-width:52px;}'+
+    '.ws-note{background:#FFF7EC; border-radius:12px; padding:7px 12px; font-size:11.5px; color:#9A6A2B; margin-bottom:8px;}'+
+    '.print-table{width:100%; border-collapse:separate; border-spacing:0; border:2px solid #E9E2D8; border-radius:14px; overflow:hidden; page-break-inside:avoid;}'+
+    '.print-table th{background:#FDF3E7; font-size:12.5px; font-weight:700; padding:6px 9px; text-align:left; border-bottom:1.5px solid #E9DCC9;}'+
+    '.print-table td{padding:5px 9px; height:31px; font-size:12.5px; border-bottom:1px dashed #DCDCE6;}'+
+    '.print-table tbody tr:nth-child(even) td{background:#FFFBF4;}'+
+    '.print-table tbody tr:last-child td{border-bottom:none;}'+
+    '.print-score-box{display:inline-block; background:#FFF3E6; color:#B85C00; border-radius:999px; padding:7px 16px; font-weight:700; font-size:12.5px; margin-top:9px;}'+
+    '.ref-box{margin-top:8px; background:#F7F7FB; border-radius:12px; padding:8px 12px;}'+
+    '.ref-head{font-size:11.5px; font-weight:700; color:#5A5A7A; margin-bottom:3px;}'+
+    '.ref-line{font-size:11px; line-height:1.5; margin:1px 0;}'+
+    '.ws-foot{margin-top:9px; font-size:11px; color:#A9A9B5; text-align:center;}'+
+    '.print-rules{background:#fff; border:2px solid #EFE7DA; border-radius:14px; padding:10px 18px;}'+
+    '.print-rules ol{padding-left:20px; line-height:1.95; margin:4px 0;}'+
+    '.print-rules li{margin-bottom:5px;}'+
+    '.group-note{background:#FFF3E6; color:#B85C00; font-weight:700; border-radius:10px; padding:9px 13px; margin-top:9px; font-size:12px;}'+
+    '.note-line{font-size:11.5px; color:#8A8A94; font-style:italic; margin:7px 0;}'+
+    '</style></head><body>'+bodyHtml+'</body></html>';
+}
+function openPrint(html, title){
+  const docHtml = buildPrintDoc(html, title || 'พิมพ์เอกสาร');
+  const area = document.getElementById('print-area');
+  if(area) area.innerHTML = html;
+  let frame = document.getElementById('print-frame');
+  if(frame && frame.parentNode) frame.parentNode.removeChild(frame);
+  frame = document.createElement('iframe');
+  frame.id = 'print-frame';
+  frame.setAttribute('aria-hidden','true');
+  frame.style.cssText = 'position:fixed; right:0; bottom:0; width:0; height:0; border:0; opacity:0;';
+  document.body.appendChild(frame);
+  let done = false;
+  const fire = ()=>{
+    if(done) return; done = true;
+    try{
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    }catch(e){
+      printFallback(docHtml);
+    }
+  };
+  try{
+    const fdoc = frame.contentWindow.document;
+    fdoc.open(); fdoc.write(docHtml); fdoc.close();
+    setTimeout(fire, 400);
+  }catch(e){
+    printFallback(docHtml);
+  }
+}
+function printFallback(docHtml){
+  const w = window.open('', '_blank');
+  if(!w){
+    alert('เบราว์เซอร์บล็อกหน้าต่างพิมพ์ กรุณาอนุญาต pop-up ของหน้านี้ แล้วกดใหม่อีกครั้ง');
+    return;
+  }
+  w.document.open(); w.document.write(docHtml); w.document.close();
+  setTimeout(()=>{ try{ w.focus(); w.print(); }catch(e){} }, 500);
+}
+function printRules(key){
+  const rulesHtml = document.getElementById('rules-'+key).innerHTML;
+  openPrint(printHeader(key,'กติกาการเล่น') + '<div class="print-rules">'+rulesHtml+'</div>', 'กติกา - '+GAME_META[key].title);
+}
+function printWorksheet(key){
+  let body = '';
+  const foot = '<div class="ws-foot">ตั้งใจทำให้เต็มที่นะ เก่งมาก!</div>';
+  if(key==='naam'){
+    let rows = '';
+    for(let i=1;i<=15;i++){ rows += '<tr><td style="width:30px; text-align:center; color:#B0B0BC;">'+i+'</td><td>&nbsp;</td><td style="width:36%;">&nbsp;</td></tr>'; }
+    body = '<div class="ws-note">มองไปรอบ ๆ ห้องเรียน แล้วเขียนคำนามที่เห็นให้ได้มากที่สุดภายในเวลาที่ครูกำหนด จากนั้นเติมว่าคำนั้นเป็นคำนามชนิดย่อยใด</div>'+
+      '<table class="print-table"><thead><tr><th>ที่</th><th>คำนามที่พบ</th><th>ชนิดย่อย</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+      '<div class="print-score-box">คะแนนที่ได้ &nbsp;______&nbsp; / 10&nbsp; (คำนามถูก 1 คะแนน + ชนิดย่อยถูก 1 คะแนน ต่อคำ)</div>'+
+      '<div class="ref-box"><div class="ref-head">ตัวช่วยจำ: ชนิดย่อยของคำนาม</div>'+
+      NAAM_SUBTYPES.map(s=>'<div class="ref-line"><b>'+s[0]+'</b> — '+s[1]+' (เช่น '+s[2]+')</div>').join('')+
+      '</div>';
+  } else if(key==='wiset'){
+    body = '<div class="ws-note">ดูประโยคบนจอทีละข้อ แล้วเขียนคำวิเศษณ์ที่เหมาะสมที่สุดลงในช่องคำตอบของตนเอง</div>'+
+      '<table class="print-table"><thead><tr><th>ข้อที่</th><th>ประโยค</th><th>คำตอบ</th></tr></thead><tbody>'+
+      WISET_Q.map((q,i)=>'<tr><td style="width:36px; text-align:center; color:#B0B0BC;">'+(i+1)+'</td><td>'+(q.sent[0]||'')+' ................... '+(q.sent[1]||'')+'</td><td style="width:26%;">&nbsp;</td></tr>').join('')+
+      '</tbody></table><div class="print-score-box">คะแนนที่ได้ &nbsp;______&nbsp; / 10</div>';
+  } else if(key==='buppot'){
+    body = '<div class="ws-note">ดูสถานการณ์บนจอทีละข้อ แล้วเขียนคำบุพบทที่บอกตำแหน่งได้ถูกต้อง เช่น บน ใต้ ข้าง ระหว่าง</div>'+
+      '<table class="print-table"><thead><tr><th>ข้อที่</th><th>ประโยค</th><th>คำบุพบทที่ใช้</th></tr></thead><tbody>'+
+      PREP_CMD.map((q,i)=>'<tr><td style="width:36px; text-align:center; color:#B0B0BC;">'+(i+1)+'</td><td>'+q.sentence.split(q.prep).join('...................')+'</td><td style="width:26%;">&nbsp;</td></tr>').join('')+
+      '</tbody></table><div class="print-score-box">คะแนนที่ได้ &nbsp;______&nbsp; / 10</div>';
+  } else if(key==='santan'){
+    body = '<div class="ws-note">เขียนคำสันธานที่เชื่อมสองประโยคให้ได้ใจความ พร้อมระบุว่าเป็นการเชื่อมแบบคล้อยตาม ขัดแย้ง ให้เลือก หรือเป็นเหตุเป็นผล</div>'+
+      '<table class="print-table"><thead><tr><th>ข้อ</th><th>ประโยคที่ 1</th><th>ประโยคที่ 2</th><th>คำสันธาน</th><th>ประเภทการเชื่อม</th></tr></thead><tbody>'+
+      CONJ_Q.map((q,i)=>'<tr><td style="width:26px; text-align:center; color:#B0B0BC;">'+(i+1)+'</td><td>'+q.a+'</td><td>'+q.b+'</td><td style="width:15%;">&nbsp;</td><td style="width:17%;">&nbsp;</td></tr>').join('')+
+      '</tbody></table><div class="print-score-box">คะแนนที่ได้ &nbsp;______&nbsp; / 10</div>';
+  }
+  openPrint(printHeader(key,'ใบงาน') + printFields() + body + foot, 'ใบงาน - '+GAME_META[key].title);
+}
+function revealAll(key){
+  let html = '';
+  if(key==='naam'){
+    html = '<h3>ตารางอ้างอิง: ชนิดย่อยของคำนาม (ใช้ตรวจใบงาน)</h3>' +
+      NAAM_SUBTYPES.map(s=>'<div class="reveal-row"><b>'+s[0]+'</b> — '+s[1]+' (เช่น '+s[2]+')</div>').join('');
+  } else if(key==='wiset'){
+    html = '<h3>เฉลยทั้งหมด: เติมสีให้ประโยค</h3>' +
+      WISET_Q.map((q,i)=>'<div class="reveal-row"><b>ข้อ '+(i+1)+'.</b> '+(q.sent[0]||'')+' <u>'+q.ans+'</u> '+(q.sent[1]||'')+'<div class="reveal-why">'+q.why+'</div></div>').join('');
+  } else if(key==='buppot'){
+    html = '<h3>เฉลยทั้งหมด: วางของให้ถูกที่</h3>' +
+      PREP_CMD.map((q,i)=>{
+        const marked = q.sentence.split(q.prep).join('<span class="prep-underline">'+q.prep+'</span>');
+        return '<div class="reveal-row"><b>ข้อ '+(i+1)+'.</b> '+marked+'<div class="reveal-why">'+q.why+'</div></div>';
+      }).join('');
+  } else if(key==='santan'){
+    html = '<h3>เฉลยทั้งหมด: ต่อประโยคปริศนา</h3>' +
+      CONJ_Q.map((q,i)=>'<div class="reveal-row"><b>ข้อ '+(i+1)+'.</b> '+q.a+' <u>'+q.ans+'</u> '+q.b+' <span style="color:#B85C00;font-weight:700;">('+q.type+')</span><div class="reveal-why">'+q.why+'</div></div>').join('');
+  }
+  document.getElementById('reveal-body').innerHTML = html;
+  document.getElementById('reveal-modal').classList.add('active');
+}
+function closeReveal(){ document.getElementById('reveal-modal').classList.remove('active'); }
 
 </script>
 </body>
